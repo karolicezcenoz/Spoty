@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spotify AI Assistant</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top, #1DB95422, #020617);
+  color: white;
+  margin: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* NAVBAR */
+.navbar {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.navbar button {
+  background: transparent;
+  border: 1px solid #1DB954;
+  color: #1DB954;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.navbar button:hover {
+  background: #1DB954;
+  color: black;
+}
+
+/* FONDO */
+.background-music {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.big-note {
+  position: absolute;
+  font-size: 120px;
+  color: rgba(29,185,84,0.15);
+  animation: float 20s linear infinite;
+}
+
+@keyframes float {
+  from { transform: translateY(100vh); }
+  to { transform: translateY(-10vh); }
+}
+
+/* APP */
+.app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 700px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TITULO */
+h1 {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  background: linear-gradient(90deg,#1DB954,#1ed760);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* CHAT */
+#chat-container {
+  flex: 1;
+  overflow-y: auto;
+  background: #111;
+  border-radius: 15px;
+  padding: 15px;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+/* MENSAJES */
+.message {
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 12px;
+  max-width: 80%;
+}
+
+.user {
+  background: #1DB954;
+  margin-left: auto;
+}
+
+.bot {
+  background: #222;
+  line-height: 1.6;
+}
+
+/* BOTONES RAPIDOS */
+.quick {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quick button {
+  background: #1DB95422;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.quick button:hover {
+  background: #1DB95455;
+}
+
+/* INPUT */
+#input-container {
+  display: flex;
+  margin-top: 10px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 20px;
+  border: none;
+}
+
+/* BOTÓN SEND */
+.send {
+  width: 55px;
+  height: 55px;
+  min-width: 55px;
+  margin-left: 10px;
+  cursor: pointer;
+
+  background: radial-gradient(circle, #1ed760, #1DB954);
+  border-radius: 50%;
+  position: relative;
+
+  box-shadow: 0 0 20px #1DB954aa;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.send::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: 17px;
+
+  border-left: 14px solid white;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+}
+
+.send:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 35px #1ed760;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+/* TABLET */
+@media (max-width: 900px) {
+  .app {
+    max-width: 95%;
+    height: 92vh;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .big-note {
+    font-size: 80px;
+  }
+}
+
+/* MÓVIL */
+@media (max-width: 600px) {
+
+  body {
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+
+  .app {
+    height: 95vh;
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  #chat-container {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .quick {
+    gap: 6px;
+  }
+
+  .quick button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  input {
+    font-size: 14px;
+  }
+
+  .send {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+  }
+
+  .send::after {
+    left: 18px;
+    top: 14px;
+    border-left: 12px solid white;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+  }
+}
+
+/* PANTALLAS GRANDES */
+@media (min-width: 1600px) {
+  .app {
+    max-width: 900px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  #chat-container {
+    font-size: 18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <button>Iniciar sesión</button>
+  <button>Registrarse</button>
+</div>
+
+<div class="background-music">
+  <div class="big-note" style="left:10%">🎵</div>
+  <div class="big-note" style="left:40%">🎶</div>
+  <div class="big-note" style="left:70%">🎧</div>
+</div>
+
+<div class="app">
+  <h1>🎧 Spotify AI Assistant</h1>
+
+  <div id="chat-container"></div>
+
+  <div class="quick">
+    <button onclick="enviarRapido('Recomiéndame música nueva')">🔥 Nueva música</button>
+    <button onclick="enviarRapido('Quiero música para entrenar')">💪 Gym</button>
+    <button onclick="enviarRapido('Algo relajante')">😌 Chill</button>
+    <button onclick="enviarRapido('Recomiéndame podcasts')">🎙️ Podcast</button>
+  </div>
+
+  <div id="input-container">
+    <input id="mensaje" placeholder="¿Qué quieres escuchar?" />
+    <div class="send" onclick="enviar()"></div>
+  </div>
+</div>
+
+<script>
+const chat = document.getElementById("chat-container");
+const input = document.getElementById("mensaje");
+
+window.onload = () => {
+  agregarMensaje(
+    "🎧 Hola, soy Spoty y te ayudaré con tus preferencias musicales.",
+    "bot"
+  );
+};
+
+function agregarMensaje(texto, tipo) {
+  const div = document.createElement("div");
+  div.className = "message " + tipo;
+  div.innerText = texto;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function enviarRapido(txt){
+  input.value = txt;
+  enviar();
+}
+
+async function enviar(){
+  const mensaje = input.value.trim();
+  if(!mensaje) return;
+
+  agregarMensaje(mensaje,"user");
+  input.value = "";
+
+  const temp = document.createElement("div");
+  temp.className = "message bot";
+  temp.innerText = "🎧 Buscando...";
+  chat.appendChild(temp);
+
+  try{
+    const res = await fetch("/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({mensaje})
+    });
+
+    const data = await res.json();
+    temp.remove();
+
+    let texto = data.respuesta || "No hay respuesta";
+
+    // limpieza final
+    texto = texto
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*/g, "")
+      .replace(/#/g, "");
+
+    agregarMensaje(texto, "bot");
+
+  }catch{
+    temp.remove();
+    agregarMensaje("Error de conexión","bot");
+  }
+}
+
+input.addEventListener("keypress",e=>{
+  if(e.key==="Enter") enviar();
+});
+</script>
+
+</body>
+</html>
