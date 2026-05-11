@@ -714,9 +714,10 @@ input{
 
         </button>
 
-    </div>
 
 </div>
+
+<!-- SUSTITUYE TODO TU <script> POR ESTE -->
 
 <script>
 
@@ -728,6 +729,36 @@ const player = document.getElementById("player");
 const playBtn = document.getElementById("playBtn");
 
 let playing = false;
+let currentSong = 0;
+
+/* 🎵 PLAYLIST REAL */
+
+const songs = [
+
+{
+title:"Blinding Lights",
+artist:"The Weeknd",
+cover:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=500",
+audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+},
+
+{
+title:"Starboy",
+artist:"The Weeknd",
+cover:"https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=500",
+audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+},
+
+{
+title:"Chill Vibes",
+artist:"Spoty AI",
+cover:"https://images.unsplash.com/photo-1507838153414-b4b713384a76?q=80&w=500",
+audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+}
+
+];
+
+const audio = new Audio(songs[0].audio);
 
 /* 🌙 MODO */
 
@@ -777,31 +808,113 @@ function enviarRapido(txt){
     enviar();
 }
 
-/* 🎵 PLAYER AUTO */
+/* 🎵 ACTUALIZAR PLAYER */
+
+function updatePlayer(){
+
+    document.getElementById("song-title").innerText =
+    songs[currentSong].title;
+
+    document.getElementById("song-artist").innerText =
+    songs[currentSong].artist;
+
+    document.getElementById("cover").src =
+    songs[currentSong].cover;
+
+    audio.src = songs[currentSong].audio;
+}
+
+/* 🎵 ACTIVAR PLAYER */
 
 function activarPlayer(){
 
     player.classList.add("active");
+
+    updatePlayer();
+
+    audio.play();
+
+    playing = true;
+
+    playBtn.innerText = "❚❚";
 }
+
+/* ▶ PLAY / PAUSA */
 
 function togglePlay(){
 
-    playing = !playing;
+    if(!playing){
 
-    playBtn.innerText = playing ? "❚❚" : "▶";
+        audio.play();
+
+        playBtn.innerText = "❚❚";
+
+    }else{
+
+        audio.pause();
+
+        playBtn.innerText = "▶";
+    }
+
+    playing = !playing;
 }
+
+/* ⏭ SIGUIENTE */
 
 function nextSong(){
 
-    document.getElementById("song-title").innerText = "Starboy";
-    document.getElementById("song-artist").innerText = "The Weeknd";
+    currentSong++;
+
+    if(currentSong >= songs.length){
+        currentSong = 0;
+    }
+
+    updatePlayer();
+
+    audio.play();
+
+    playing = true;
+
+    playBtn.innerText = "❚❚";
 }
+
+/* ⏮ ANTERIOR */
 
 function prevSong(){
 
-    document.getElementById("song-title").innerText = "Blinding Lights";
-    document.getElementById("song-artist").innerText = "The Weeknd";
+    currentSong--;
+
+    if(currentSong < 0){
+        currentSong = songs.length - 1;
+    }
+
+    updatePlayer();
+
+    audio.play();
+
+    playing = true;
+
+    playBtn.innerText = "❚❚";
 }
+
+/* 🎵 AUTO NEXT */
+
+audio.addEventListener("ended",()=>{
+
+    nextSong();
+});
+
+/* 📊 BARRA PROGRESO */
+
+const progressBar = document.querySelector(".progress-bar");
+
+audio.addEventListener("timeupdate",()=>{
+
+    const progress =
+    (audio.currentTime / audio.duration) * 100;
+
+    progressBar.style.width = progress + "%";
+});
 
 /* ✨ CHAT IA */
 
