@@ -1,383 +1,887 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Spoty AI | Premium LED</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<title>Spoty AI | Premium Player</title>
 
-    <style>
-        :root {
-            --spotify-green: #1DB954;
-            --neon-green: #21ff6c;
-            --bg-dark: #000000;
-            --safe-area-bottom: env(safe-area-inset-bottom);
-            
-            /* Variables dinámicas para el tema */
-            --bot-bg: #18181b;
-            --bot-text: #ffffff;
-            --input-bg: #121212;
-            --input-text: #ffffff;
-            --header-bg: rgba(0, 0, 0, 0.7);
-            --header-text: #ffffff;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
-        /* Clase MODO CLARO (Mantiene fondo verde, cambia burbujas) */
-        .light-mode {
-            --bot-bg: #ffffff;
-            --bot-text: #000000;
-            --input-bg: #f4f4f5;
-            --input-text: #000000;
-            --header-bg: rgba(255, 255, 255, 0.85);
-            --header-text: #000000;
-        }
+<style>
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
+:root{
+    --spotify-green:#1DB954;
+    --spotify-green-light:#1ed760;
+    --bg:#040404;
+    --card:#111111;
+    --text:#ffffff;
+    --bot:#181818;
+    --input:#0d0d0d;
+    --border:rgba(255,255,255,.08);
+    --safe-bottom:env(safe-area-inset-bottom);
+}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            /* FONDO VERDE SPOTIFY */
-            background: 
-                radial-gradient(circle at 10% 10%, rgba(29, 185, 84, 0.25), transparent 40%),
-                radial-gradient(circle at 90% 10%, rgba(29, 185, 84, 0.2), transparent 40%),
-                radial-gradient(circle at 50% 90%, rgba(29, 185, 84, 0.3), transparent 50%),
-                linear-gradient(180deg, #020617 0%, #000 100%);
-            
-            color: white;
-            height: 100dvh; /* Especial para iPhone */
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
+/* 🌞 MODO CLARO */
+.light-mode{
+    --bg:#f5f5f5;
+    --card:#ffffff;
+    --text:#000000;
+    --bot:#ffffff;
+    --input:#ffffff;
+    --border:rgba(0,0,0,.08);
+}
 
-        /* 🎵 EMOJIS FLOTANTES */
-        .bg-music {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1; 
-            overflow: hidden;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
 
-        .note {
-            position: absolute;
-            font-size: 40px;
-            opacity: 0.15;
-            bottom: -60px;
-            animation: floatUp 18s linear infinite;
-        }
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
 
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.15; }
-            90% { opacity: 0.15; }
-            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
-        }
+body{
+    font-family:'Inter',sans-serif;
+    color:var(--text);
 
-        /* 🟢 EFECTO LUCES LED NEÓN SUPERIOR */
-        .led-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            padding-top: 4px;
-        }
+    background:
+    radial-gradient(circle at top left, rgba(29,185,84,.28), transparent 30%),
+    radial-gradient(circle at top right, rgba(29,185,84,.18), transparent 30%),
+    radial-gradient(circle at bottom center, rgba(29,185,84,.18), transparent 35%),
+    linear-gradient(180deg,#04110a 0%, #000000 100%);
 
-        .led-bar {
-            height: 3px;
-            width: 30px;
-            background: var(--neon-green);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--neon-green), 0 0 15px var(--neon-green);
-            animation: ledPulse 1.5s infinite alternate;
-        }
+    background-color:#000;
 
-        @keyframes ledPulse {
-            0% { opacity: 0.4; filter: brightness(0.8); }
-            100% { opacity: 1; filter: brightness(1.5); }
-        }
+    display:flex;
+    flex-direction:column;
 
-        .led-bar:nth-child(2) { animation-delay: 0.2s; }
-        .led-bar:nth-child(3) { animation-delay: 0.4s; }
-        .led-bar:nth-child(4) { animation-delay: 0.6s; }
+    position:relative;
 
-        /* HEADER */
-        .header {
-            padding: 15px 15px 10px 15px;
-            background: var(--header-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(29, 185, 84, 0.2);
-            z-index: 100;
-            position: relative;
-        }
+    height:100dvh;
+}
 
-        .logo {
-            font-family: 'Poppins';
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--header-text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 5px; 
-        }
+/* 🎵 FONDO EMOJIS */
 
-        .nav-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+.bg-music{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:0;
+}
 
-        .btn-nav {
-            padding: 7px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
+.note{
+    position:absolute;
+    bottom:-100px;
+    font-size:40px;
+    opacity:.12;
+    animation:floatMusic linear infinite;
+}
 
-        .btn-mode { background: var(--spotify-green); color: black; }
-        .btn-login { background: transparent; color: var(--header-text); border: 1px solid var(--header-text); }
-        .btn-signup { background: white; color: black; }
+.note:nth-child(1){
+    left:8%;
+    animation-duration:15s;
+}
 
-        /* ÁREA DE CHAT */
-        #chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 5;
-            -webkit-overflow-scrolling: touch;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-        }
+.note:nth-child(2){
+    left:30%;
+    animation-duration:18s;
+}
 
-        .message {
-            padding: 14px 18px;
-            border-radius: 20px;
-            max-width: 85%;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            animation: messageIn 0.3s ease-out;
-        }
+.note:nth-child(3){
+    left:50%;
+    animation-duration:14s;
+}
 
-        .user {
-            background: var(--spotify-green);
-            color: black;
-            align-self: flex-end;
-            font-weight: 600;
-            border-bottom-right-radius: 4px;
-        }
+.note:nth-child(4){
+    left:75%;
+    animation-duration:20s;
+}
 
-        .bot {
-            background: var(--bot-bg);
-            color: var(--bot-text);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+.note:nth-child(5){
+    left:92%;
+    animation-duration:16s;
+}
 
-        /* ACCIONES RÁPIDAS */
-        .quick-actions {
-            z-index: 10;
-            padding: 12px 0;
-        }
+@keyframes floatMusic{
+    from{
+        transform:translateY(0) rotate(0deg);
+    }
+    to{
+        transform:translateY(-120vh) rotate(360deg);
+    }
+}
 
-        .quick-scroll {
-            display: flex;
-            gap: 8px;
-            padding: 0 15px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
+/* 🟢 LEDS */
 
-        .quick-scroll::-webkit-scrollbar { display: none; }
+.led-container{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    z-index:999;
+    padding-top:4px;
+}
 
-        .quick-scroll button {
-            background: rgba(29, 185, 84, 0.1);
-            border: 1px solid var(--spotify-green);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
+.led{
+    width:45px;
+    height:4px;
+    border-radius:10px;
+    background:var(--spotify-green-light);
 
-        /* INPUT AREA */
-        .input-area {
-            background: var(--bg-dark);
-            padding: 12px 15px calc(12px + var(--safe-area-bottom));
-            z-index: 20;
-            border-top: 1px solid rgba(29, 185, 84, 0.1);
-        }
+    box-shadow:
+    0 0 10px var(--spotify-green-light),
+    0 0 25px var(--spotify-green-light);
 
-        .input-box {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
+    animation:ledPulse 1.2s infinite alternate;
+}
 
-        input {
-            flex: 1;
-            background: var(--input-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 14px 22px;
-            border-radius: 30px;
-            color: var(--input-text);
-            outline: none;
-            font-size: 1rem;
-        }
+.led:nth-child(2){
+    animation-delay:.2s;
+}
 
-        .send {
-            width: 50px;
-            height: 50px;
-            background: radial-gradient(circle, #1ed760, #1DB954);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(29, 185, 84, 0.4);
-            cursor: pointer;
-            border: none;
-            flex-shrink: 0;
-        }
+.led:nth-child(3){
+    animation-delay:.4s;
+}
 
-        .send svg { width: 22px; height: 22px; fill: black; }
+.led:nth-child(4){
+    animation-delay:.6s;
+}
 
-        /* RESPONSIVE */
-        @media (max-width: 480px) {
-            .logo span { display: none; } /* En móviles pequeños solo queda el icono para dar espacio a los botones */
-        }
-    </style>
+@keyframes ledPulse{
+    from{
+        opacity:.4;
+        transform:scaleX(.9);
+    }
+    to{
+        opacity:1;
+        transform:scaleX(1);
+    }
+}
+
+/* HEADER */
+
+.header{
+    position:relative;
+    z-index:10;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:18px 18px 14px 18px;
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-family:'Poppins',sans-serif;
+    font-size:2rem;
+    font-weight:700;
+
+    color:white;
+}
+
+.logo span{
+    background:linear-gradient(90deg,#1DB954,#1ed760);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.btn{
+    border:none;
+    cursor:pointer;
+    border-radius:999px;
+    font-weight:600;
+    transition:.2s;
+}
+
+.btn-theme{
+    background:var(--spotify-green);
+    color:black;
+    padding:10px 16px;
+}
+
+.btn-login{
+    background:transparent;
+    border:1px solid rgba(255,255,255,.15);
+    color:white;
+    padding:10px 16px;
+}
+
+.btn-sign{
+    background:white;
+    color:black;
+    padding:10px 16px;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+}
+
+/* 🎵 PLAYER */
+
+.player{
+    width:min(95%,1200px);
+    margin:18px auto 10px auto;
+
+    background:
+    linear-gradient(90deg,
+    rgba(29,185,84,.12),
+    rgba(0,0,0,.35));
+
+    border:1px solid rgba(255,255,255,.07);
+
+    border-radius:30px;
+
+    padding:20px;
+
+    backdrop-filter:blur(18px);
+
+    display:none;
+
+    z-index:5;
+}
+
+.player.active{
+    display:block;
+    animation:fadePlayer .5s ease;
+}
+
+@keyframes fadePlayer{
+    from{
+        opacity:0;
+        transform:translateY(-15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.song-top{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+.cover{
+    width:85px;
+    height:85px;
+    border-radius:18px;
+    object-fit:cover;
+}
+
+.song-title{
+    font-size:1.8rem;
+    font-weight:700;
+}
+
+.song-artist{
+    opacity:.7;
+    margin-top:4px;
+}
+
+.progress{
+    width:100%;
+    height:6px;
+    background:rgba(255,255,255,.08);
+    border-radius:999px;
+    margin:22px 0;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:35%;
+    height:100%;
+    background:var(--spotify-green);
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:18px;
+}
+
+.control-btn{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:none;
+    background:#202020;
+    color:white;
+    cursor:pointer;
+    font-size:1.3rem;
+}
+
+.play-btn{
+    width:78px;
+    height:78px;
+    background:var(--spotify-green);
+    color:black;
+    font-size:2rem;
+
+    box-shadow:
+    0 0 25px rgba(29,185,84,.5);
+}
+
+/* CHAT */
+
+#chat-container{
+    flex:1;
+
+    overflow-y:auto;
+
+    width:min(95%,1000px);
+
+    margin:auto;
+
+    padding:20px;
+
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+
+    position:relative;
+    z-index:5;
+
+    -webkit-overflow-scrolling:touch;
+
+    scroll-behavior:smooth;
+}
+
+#chat-container::-webkit-scrollbar{
+    width:5px;
+}
+
+#chat-container::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.1);
+    border-radius:999px;
+}
+
+.message{
+    max-width:85%;
+    padding:16px 18px;
+    border-radius:22px;
+    line-height:1.6;
+    font-size:.96rem;
+    animation:messageIn .3s ease;
+    word-wrap:break-word;
+}
+
+@keyframes messageIn{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.user{
+    align-self:flex-end;
+    background:var(--spotify-green);
+    color:black;
+    font-weight:600;
+    border-bottom-right-radius:6px;
+}
+
+.bot{
+    align-self:flex-start;
+    background:var(--bot);
+    border:1px solid var(--border);
+    border-bottom-left-radius:6px;
+}
+
+/* QUICK */
+
+.quick-actions{
+    width:100%;
+    overflow-x:auto;
+    padding:10px 12px;
+    z-index:5;
+}
+
+.quick-scroll{
+    display:flex;
+    gap:10px;
+}
+
+.quick-scroll button{
+    background:rgba(29,185,84,.08);
+    border:1px solid rgba(29,185,84,.35);
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    font-weight:600;
+}
+
+/* INPUT */
+
+.input-area{
+    padding:
+    12px
+    14px
+    calc(12px + var(--safe-bottom));
+
+    z-index:10;
+}
+
+.input-box{
+    width:min(95%,1000px);
+    margin:auto;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+input{
+    flex:1;
+    min-width:0;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:999px;
+
+    color:white;
+
+    padding:18px 22px;
+
+    outline:none;
+
+    font-size:1rem;
+
+    backdrop-filter:blur(15px);
+}
+
+.send{
+    width:70px;
+    height:70px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    background:
+    radial-gradient(circle,
+    #1ed760,
+    #1DB954);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+    0 0 25px rgba(29,185,84,.6);
+
+    transition:.2s;
+}
+
+.send:hover{
+    transform:scale(1.06);
+}
+
+.send svg{
+    width:28px;
+    fill:black;
+}
+
+/* 📱 MOBILE */
+
+@media(max-width:768px){
+
+    .logo{
+        font-size:1.4rem;
+    }
+
+    .btn-login,
+    .btn-sign{
+        display:none;
+    }
+
+    .player{
+        padding:16px;
+    }
+
+    .song-title{
+        font-size:1.1rem;
+    }
+
+    .song-artist{
+        font-size:.9rem;
+    }
+
+    .cover{
+        width:70px;
+        height:70px;
+    }
+
+    .message{
+        max-width:95%;
+        font-size:.92rem;
+    }
+
+    .input-box{
+        gap:8px;
+    }
+
+    .send{
+        width:60px;
+        height:60px;
+    }
+
+    input{
+        padding:16px;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
-<!-- 🎵 EMOJIS FLOTANTES -->
+<!-- 🎵 MUSICA FONDO -->
 <div class="bg-music">
-    <div class="note" style="left:10%; animation-delay: 0s;">🎵</div>
-    <div class="note" style="left:35%; animation-delay: 5s;">🎶</div>
-    <div class="note" style="left:55%; animation-delay: 10s;">🎧</div>
-    <div class="note" style="left:75%; animation-delay: 3s;">🎵</div>
-    <div class="note" style="left:92%; animation-delay: 8s;">🎶</div>
+    <div class="note">🎵</div>
+    <div class="note">🎶</div>
+    <div class="note">🎧</div>
+    <div class="note">🎵</div>
+    <div class="note">🎶</div>
 </div>
 
+<!-- 🟢 LEDS -->
+<div class="led-container">
+    <div class="led"></div>
+    <div class="led"></div>
+    <div class="led"></div>
+    <div class="led"></div>
+</div>
+
+<!-- HEADER -->
 <header class="header">
-    <!-- Luces LED -->
-    <div class="led-container">
-        <div class="led-bar"></div>
-        <div class="led-bar"></div>
-        <div class="led-bar"></div>
-        <div class="led-bar"></div>
+
+    <div class="logo">
+        🎧 <span>Spoty AI</span>
     </div>
 
-    <div class="logo">🎧 <span>Spoty AI</span></div>
     <div class="nav-actions">
-        <button class="btn-nav btn-mode" onclick="toggleTheme()" id="theme-btn">☀️ Modo Claro</button>
-        <button class="btn-nav btn-login">Iniciar Sesión</button>
-        <button class="btn-nav btn-signup">Registrarse</button>
+
+        <button
+        class="btn btn-theme"
+        id="theme-btn"
+        onclick="toggleTheme()">
+        ☀️ Modo Claro
+        </button>
+
+        <button class="btn btn-login">
+        Iniciar sesión
+        </button>
+
+        <button class="btn btn-sign">
+        Registrarse
+        </button>
+
     </div>
+
 </header>
 
-<main id="chat-container"></main>
+<!-- 🎵 PLAYER -->
+<div class="player" id="player">
 
-<div class="quick-actions">
-    <div class="quick-scroll">
-        <button onclick="enviarRapido('🔥 Nueva música')">🔥 Nueva</button>
-        <button onclick="enviarRapido('💪 Música Gym')">💪 Gym</button>
-        <button onclick="enviarRapido('😌 Modo chill')">😌 Chill</button>
-        <button onclick="enviarRapido('🇰🇷 K-pop Hits')">🇰🇷 K-pop</button>
+    <div class="song-top">
+
+        <img
+        class="cover"
+        id="cover"
+        src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=500"
+        />
+
+        <div>
+            <div class="song-title" id="song-title">
+            Blinding Lights
+            </div>
+
+            <div class="song-artist" id="song-artist">
+            The Weeknd
+            </div>
+        </div>
+
     </div>
+
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+    <div class="controls">
+
+        <button class="control-btn" onclick="prevSong()">
+        ⏮
+        </button>
+
+        <button class="control-btn play-btn" onclick="togglePlay()" id="playBtn">
+        ▶
+        </button>
+
+        <button class="control-btn" onclick="nextSong()">
+        ⏭
+        </button>
+
+    </div>
+
 </div>
 
-<div class="input-area">
-    <div class="input-box">
-        <input id="mensaje" placeholder="¿Qué quieres escuchar?" autocomplete="off">
-        <button class="send" onclick="enviar()">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+<!-- CHAT -->
+<main id="chat-container"></main>
+
+<!-- QUICK -->
+<div class="quick-actions">
+
+    <div class="quick-scroll">
+
+        <button onclick="enviarRapido('🔥 Nueva música')">
+        🔥 Nueva música
         </button>
+
+        <button onclick="enviarRapido('💪 Música gym')">
+        💪 Gym
+        </button>
+
+        <button onclick="enviarRapido('😌 Música chill')">
+        😌 Chill
+        </button>
+
+        <button onclick="enviarRapido('🇰🇷 K-pop')">
+        🇰🇷 K-pop
+        </button>
+
     </div>
+
+</div>
+
+<!-- INPUT -->
+<div class="input-area">
+
+    <div class="input-box">
+
+        <input
+        id="mensaje"
+        placeholder="¿Qué quieres escuchar hoy?"
+        autocomplete="off"
+        />
+
+        <button class="send" onclick="enviar()">
+
+            <svg viewBox="0 0 24 24">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+
+        </button>
+
+    </div>
+
 </div>
 
 <script>
-    const chat = document.getElementById("chat-container");
-    const input = document.getElementById("mensaje");
-    const body = document.body;
-    const themeBtn = document.getElementById("theme-btn");
 
-    function toggleTheme() {
-        body.classList.toggle('light-mode');
-        themeBtn.innerText = body.classList.contains('light-mode') ? "🌙 Modo Oscuro" : "☀️ Modo Claro";
+const chat = document.getElementById("chat-container");
+const input = document.getElementById("mensaje");
+const body = document.body;
+const player = document.getElementById("player");
+
+const playBtn = document.getElementById("playBtn");
+
+let playing = false;
+
+/* 🌙 MODO */
+
+function toggleTheme(){
+
+    body.classList.toggle("light-mode");
+
+    const btn = document.getElementById("theme-btn");
+
+    btn.innerText = body.classList.contains("light-mode")
+    ? "🌙 Modo Oscuro"
+    : "☀️ Modo Claro";
+}
+
+/* 💬 MENSAJES */
+
+window.onload = () => {
+
+    agregarMensaje(
+    "🎧 ¡Luces listas, beats cargados! Soy Spoty AI. ¿Qué mood quieres hoy? 🔥",
+    "bot"
+    );
+};
+
+function agregarMensaje(texto,tipo){
+
+    const div = document.createElement("div");
+
+    div.className = "message " + tipo;
+
+    div.innerText = texto;
+
+    chat.appendChild(div);
+
+    setTimeout(()=>{
+        chat.scrollTo({
+            top:chat.scrollHeight,
+            behavior:"smooth"
+        });
+    },50);
+}
+
+/* 🚀 QUICK */
+
+function enviarRapido(txt){
+    input.value = txt;
+    enviar();
+}
+
+/* 🎵 PLAYER AUTO */
+
+function activarPlayer(){
+
+    player.classList.add("active");
+}
+
+function togglePlay(){
+
+    playing = !playing;
+
+    playBtn.innerText = playing ? "❚❚" : "▶";
+}
+
+function nextSong(){
+
+    document.getElementById("song-title").innerText = "Starboy";
+    document.getElementById("song-artist").innerText = "The Weeknd";
+}
+
+function prevSong(){
+
+    document.getElementById("song-title").innerText = "Blinding Lights";
+    document.getElementById("song-artist").innerText = "The Weeknd";
+}
+
+/* ✨ CHAT IA */
+
+async function enviar(){
+
+    const mensaje = input.value.trim();
+
+    if(!mensaje) return;
+
+    agregarMensaje(mensaje,"user");
+
+    input.value = "";
+
+    const temp = document.createElement("div");
+
+    temp.className = "message bot";
+
+    temp.innerText = "🎧 Sincronizando beats...";
+
+    chat.appendChild(temp);
+
+    chat.scrollTop = chat.scrollHeight;
+
+    try{
+
+        const res = await fetch("/chat",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({mensaje})
+        });
+
+        const data = await res.json();
+
+        temp.remove();
+
+        agregarMensaje(
+        data.respuesta || "No hay respuesta",
+        "bot"
+        );
+
+        /* 🎵 ACTIVAR PLAYER SOLO SI PIDE MUSICA */
+
+        const m = mensaje.toLowerCase();
+
+        if(
+            m.includes("musica") ||
+            m.includes("música") ||
+            m.includes("song") ||
+            m.includes("cancion") ||
+            m.includes("playlist") ||
+            m.includes("kpop") ||
+            m.includes("gym") ||
+            m.includes("chill")
+        ){
+
+            activarPlayer();
+        }
+
+    }catch{
+
+        temp.remove();
+
+        agregarMensaje(
+        "⚠️ Error conectando con Spoty AI",
+        "bot"
+        );
     }
+}
 
-    window.onload = () => {
-        agregarMensaje("¡Luces listas, beats cargados! 🟢 Soy tu Spoty AI. ¿Qué vibra quieres que domine la sesión hoy?", "bot");
-    };
+/* ⌨️ ENTER */
 
-    function agregarMensaje(texto, tipo) {
-        const div = document.createElement("div");
-        div.className = "message " + tipo;
-        div.innerText = texto;
-        chat.appendChild(div);
-        setTimeout(() => { chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' }); }, 60);
-    }
+input.addEventListener("keypress",e=>{
 
-    function enviarRapido(txt) {
-        input.value = txt;
+    if(e.key==="Enter"){
         enviar();
     }
+});
 
-    async function enviar() {
-        const mensaje = input.value.trim();
-        if (!mensaje) return;
-        agregarMensaje(mensaje, "user");
-        input.value = "";
-        const temp = document.createElement("div");
-        temp.className = "message bot";
-        temp.innerText = "🎧 Sincronizando beats...";
-        chat.appendChild(temp);
-        chat.scrollTop = chat.scrollHeight;
-
-        try {
-            const res = await fetch("/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ mensaje })
-            });
-            const data = await res.json();
-            temp.remove();
-            agregarMensaje(data.respuesta || "Conexión interrumpida.", "bot");
-        } catch {
-            temp.remove();
-            agregarMensaje("Error al conectar con el estudio.", "bot");
-        }
-    }
-
-    input.addEventListener("keypress", e => { if (e.key === "Enter") enviar(); });
 </script>
 
 </body>
